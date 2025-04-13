@@ -17,19 +17,14 @@
          }
          /* Browser Shell Styling */
          .safari-window {
-         width: 90vw;
-         max-width: 1200px;
-         height: 90vh;
-         max-height: 900px;
-         margin: 5vh auto;
-         padding: 0;
-         border-radius: 8px;
+         width: 800px;
+         max-width: 95%;
+         margin: 50px auto;
+         border-radius: 8px 8px 6px 6px;
          box-shadow: 0 4px 18px rgba(0,0,0,0.4);
          background: #fff;
          overflow: hidden;
          display: none;
-         display: flex;
-         flex-direction: column;
          }
          /* Title Bar */
          .title-bar {
@@ -247,12 +242,13 @@
          /* Content Area */
          .content {
          background: white;
-         flex: 1;
-         padding: 24px;
-         font-size: 14px;
-         line-height: 1.6;
+         min-height: 300px;
+         padding: 20px;
+         font-size: 13px;
+         line-height: 1.5;
          overflow-y: auto;
-         min-height: 0; /* allows flexbox to manage height properly */
+         height: calc(100vh - 230px);
+         max-height: 600px;
          }
          h1 {
          color: #4b0082;
@@ -568,21 +564,23 @@
          </div>
       </div>
       <script>
-         window.onload = function() {
-           document.getElementById("splash").style.display = "none";
-           document.querySelector(".safari-window").style.display = "block";
-         
-           const loadingIndicator = document.querySelector(".loading-indicator");
-           const statusText = document.querySelector(".status-text");
-         
-           loadingIndicator.style.opacity = "1";
-           statusText.textContent = "Loading roostergoose.app...";
-         
-           setTimeout(function () {
-             loadingIndicator.style.opacity = "0";
-             statusText.textContent = "Done";
-           }, 2000);
-         };
+window.onload = function () {
+  setTimeout(function () {
+    document.getElementById("splash").style.display = "none";
+    document.querySelector(".safari-window").style.display = "block";
+
+    const loadingIndicator = document.querySelector(".loading-indicator");
+    const statusText = document.querySelector(".status-text");
+
+    loadingIndicator.style.opacity = "1";
+    statusText.textContent = "Loading roostergoose.app...";
+
+    setTimeout(function () {
+      loadingIndicator.style.opacity = "0";
+      statusText.textContent = "Done";
+    }, 2000);
+  }, 5000); // splash duration
+};
          
          // Toggle Legal iFrames
          function toggleIframe(id) {
@@ -618,27 +616,27 @@
          
          // Contact form handler (no redirect, clears form)
          document.getElementById('contact-form').addEventListener('submit', function (e) {
-         e.preventDefault();
-         const form = this;
-         const formData = new FormData(form);
-         
-         fetch(form.action, {
-         method: "POST",
-         body: formData
-         })
-         .then(response => {
-         if (response.ok) {
-         form.reset();
-         document.getElementById('confirmation-message').style.display = "inline";
-         } else {
-         alert("Submission failed. Please try again.");
-         }
-         })
-         .catch(error => {
-         alert("Something went wrong. Please try again.");
-         console.error(error);
-         });
-         });
+  e.preventDefault();
+  const form = this;
+  const formData = new FormData(form);
+
+  fetch(form.action, {
+    method: "POST",
+    body: formData
+  })
+  .then(response => {
+    if (response.ok) {
+      form.reset();
+      document.getElementById('confirmation-message').style.display = "inline";
+    } else {
+      alert("Submission failed. Please try again.");
+    }
+  })
+  .catch(error => {
+    alert("Something went wrong. Please try again.");
+    console.error(error);
+  });
+});
          
          // Scroll behavior
          document.querySelector('.contact-menu-item').addEventListener('click', function() {
