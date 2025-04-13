@@ -17,14 +17,19 @@
          }
          /* Browser Shell Styling */
          .safari-window {
-         width: 800px;
-         max-width: 95%;
-         margin: 50px auto;
-         border-radius: 8px 8px 6px 6px;
+         width: 90vw;
+         max-width: 1200px;
+         height: 90vh;
+         max-height: 900px;
+         margin: 5vh auto;
+         padding: 0;
+         border-radius: 8px;
          box-shadow: 0 4px 18px rgba(0,0,0,0.4);
          background: #fff;
          overflow: hidden;
          display: none;
+         display: flex;
+         flex-direction: column;
          }
          /* Title Bar */
          .title-bar {
@@ -242,13 +247,12 @@
          /* Content Area */
          .content {
          background: white;
-         min-height: 300px;
-         padding: 20px;
-         font-size: 13px;
-         line-height: 1.5;
+         flex: 1;
+         padding: 24px;
+         font-size: 14px;
+         line-height: 1.6;
          overflow-y: auto;
-         height: calc(100vh - 230px);
-         max-height: 600px;
+         min-height: 0; /* allows flexbox to manage height properly */
          }
          h1 {
          color: #4b0082;
@@ -614,22 +618,26 @@
          
          // Contact form handler (no redirect, clears form)
          document.getElementById('contact-form').addEventListener('submit', function (e) {
-           e.preventDefault();
-           const form = this;
+         e.preventDefault();
+         const form = this;
+         const formData = new FormData(form);
          
-           fetch(form.action, {
-             method: "POST",
-             headers: {
-               'Content-Type': 'application/x-www-form-urlencoded'
-             },
-             body: new URLSearchParams(new FormData(form)).toString()
-           }).then(() => {
-             form.reset();
-             document.getElementById('confirmation-message').style.display = "inline";
-           }).catch(error => {
-             alert("Something went wrong. Please try again.");
-             console.error(error);
-           });
+         fetch(form.action, {
+         method: "POST",
+         body: formData
+         })
+         .then(response => {
+         if (response.ok) {
+         form.reset();
+         document.getElementById('confirmation-message').style.display = "inline";
+         } else {
+         alert("Submission failed. Please try again.");
+         }
+         })
+         .catch(error => {
+         alert("Something went wrong. Please try again.");
+         console.error(error);
+         });
          });
          
          // Scroll behavior
