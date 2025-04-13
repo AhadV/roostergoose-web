@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>RoosterGoose — An App Studio Clucking With Ideas</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: "Lucida Grande", Tahoma, sans-serif;
+      background: #e0e0e0;
+      color: #2c2c2c;
+    }
+
+    /* Splash Screen */
+    #splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(to bottom, #f0f0f0, #dcdcdc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
+      font-family: "Courier New", monospace;
+      transition: opacity 1s ease;
+    }
+
+    #splash-logo {
+      font-size: 42px;
+      font-weight: bold;
+      letter-spacing: 6px;
+      margin-bottom: 30px;
+      color: #4b0082;
+    }
+
+    .mac-loading {
+      width: 200px;
+      height: 10px;
+      background: #dcdcdc;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px #999;
+      position: relative;
+    }
+
+    .mac-loading::before {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 100%;
+      background: linear-gradient(to right, rgba(150,150,150,0.2), rgba(80,80,80,0.5), rgba(150,150,150,0.2));
+      animation: slide 2s infinite linear;
+    }
+
+    @keyframes slide {
+      0% { left: -40px; }
+      100% { left: 200px; }
+    }
+
+    .fade-out {
+      opacity: 0;
+    }
+
+    .browser {
+      margin: 40px auto;
+      width: 92%;
+      max-width: 960px;
+      border-radius: 14px;
+      background: white;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+      overflow: hidden;
+      display: none;
+      transform: scale(0.95);
+      transition: transform 0.6s ease;
+    }
+
+    .browser.show {
+      display: block;
+      transform: scale(1);
+    }
+
+    .browser-header {
+      background: linear-gradient(to bottom, #eaeaea, #cfcfcf);
+      height: 42px;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid #aaa;
+      box-shadow: inset 0 -1px 1px rgba(255,255,255,0.5);
+    }
+
+    .buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    .btn.red { background: #ff5f57; }
+    .btn.yellow { background: #ffbd2e; }
+    .btn.green { background: #28c840; }
+
+    .url-bar {
+      margin-left: 12px;
+      flex-grow: 1;
+      background: white;
+      height: 24px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-family: "Courier New", monospace;
+      color: #333;
+      position: relative;
+    }
+
+    .url-bar input {
+      all: unset;
+      width: 100%;
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    .url-bar input::placeholder {
+      color: #333;
+    }
+
+    .main {
+      padding: 28px;
+    }
+
+    h1 {
+      color: #4b0082;
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
+
+    .badge {
+      background: gold;
+      color: black;
+      font-weight: bold;
+      font-family: "Courier New", monospace;
+      border-radius: 4px;
+      padding: 2px 8px;
+      margin-left: 6px;
+    }
+
+    .app-title {
+      font-weight: bold;
+      color: #4b0082;
+    }
+
+    label, input, textarea {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      font-family: inherit;
+    }
+
+    input, textarea {
+      padding: 8px;
+      border: 1px solid #aaa;
+      border-radius: 4px;
+      font-family: "Courier New", monospace;
+    }
+
+    button {
+      margin-top: 15px;
+      background-color: #4b0082;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 60px;
+      text-align: center;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .legal-links {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .legal-links a {
+      margin: 0 10px;
+      color: #4b0082;
+      text-decoration: underline;
+      cursor: pointer;
+      font-family: "Courier New", monospace;
+    }
+
+    .legal-iframe {
+      display: none;
+      margin-top: 10px;
+      width: 100%;
+      height: 400px;
+      border: 1px solid #ccc;
+    }
+
+    .hidden-honey {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div id="splash-logo"><img src="https://img.icons8.com/?size=100&id=2719&format=png&color=000000" alt="Icons8 image"></div>
+  <div class="mac-loading"><div></div></div>
+</div>
+
+<!-- Safari Shell -->
+<div class="browser" id="browser">
+  <div class="browser-header">
+    <div class="buttons">
+      <div class="btn red"></div>
+      <div class="btn yellow"></div>
+      <div class="btn green"></div>
+    </div>
+    <div class="url-bar">
+      <input type="text" value="roostergoose.app" oninput="this.value='roostergoose.app'">
+    </div>
+  </div>
+
+  <div class="main">
+    <h1>RoosterGoose</h1>
+    <p>We hatch ideas, peck at bugs, and ship useful iOS apps with just the right amount of feathered flair. 🐓🪿</p>
+
+    <h2>Our Apps</h2>
+    <p class="app-title">🪪 NotarizeHQ <a href="https://www.producthunt.com/products/notarytrusty-com" target="_blank" class="badge">RIP 💀</a></p>
+    <p>The notarization app the internet needed... until it didn’t. Gone, but notary-forgotten.</p>
+
+    <p class="app-title">😁 SmileMaxx <a href="https://apps.apple.com/us/app/smilemaxx/id6737210322" target="_blank" class="badge">Live on iOS</a></p>
+    <p>Because your camera roll deserves pearly whites and maxxed-out smiles.</p>
+
+    <p class="app-title">🌿 LeafyLens <span class="badge">Coming Soon</span></p>
+    <p>Plant care meets AI magic. Snap, diagnose, and thrive. Your houseplants are about to get pampered.</p>
+    <style>
+  .contact-block {
+    max-width: 680px;
+    margin: 40px auto;
+    padding: 24px 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background: linear-gradient(to bottom, #fdfdfd, #eaeaea);
+    box-shadow: 0 0 0 4px #ccc, 0 2px 6px rgba(0,0,0,0.2);
+    font-family: "Lucida Grande", sans-serif;
+  }
+
+  .contact-block h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #4b0082;
+  }
+
+  .contact-block .form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .contact-block input,
+  .contact-block textarea {
+    width: 100%;
+    padding: 10px 12px;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    border: 1px solid #999;
+    border-radius: 6px;
+    background-color: #fff;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .contact-block textarea {
+    resize: vertical;
+  }
+
+  .contact-block button {
+    background: #4b0082;
+    color: white;
+    font-weight: bold;
+    font-family: "Courier New", monospace;
+    font-size: 15px;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    width: 100%;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: inset 0 -1px 0 rgba(255,255,255,0.2);
+    transition: background 0.2s ease;
+  }
+
+  .contact-block button:hover {
+    background: #3c006a;
+  }
+</style>
+
+<div class="contact-block">
+  <h1>Contact RoosterGoose</h1>
+  <form target="_blank" action="https://formsubmit.co/support@roostergoose.co" method="POST">
+    <!-- Honeypot -->
+    <input type="text" name="_honey" style="display:none">
+    <!-- Disable Captcha -->
+    <input type="hidden" name="_captcha" value="false">
+    <!-- Success page optional -->
+    <!-- <input type="hidden" name="_next" value="https://roostergoose.app/thanks.html"> -->
+
+    <div class="form-row">
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="email" name="email" placeholder="Email Address" required>
+    </div>
+
+    <div class="form-row" style="flex-direction: column;">
+      <textarea name="message" rows="8" placeholder="Your Message" required></textarea>
+    </div>
+
+    <button type="submit">Submit</button>
+  </form>
+</div>
+
+    <div class="legal-links">
+      <h2>Legal Stuff</h2>
+      <a onclick="toggleIframe('privacy')">Privacy Policy</a>
+      <a onclick="toggleIframe('eula')">EULA</a>
+      <a onclick="toggleIframe('terms')">Terms of Use</a>
+    </div>
+
+    <iframe id="privacy" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vTfrY-nDMoEKnxlH3f8tYQWNi_5t2xTIwxRlCTJ-4ahmHO2Q1yJR0wjEHeH2pof4A73ukEO9gZgshtY/pub?embedded=true"></iframe>
+
+    <iframe id="eula" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vSw5am1nA901wtB64JonUjzo4L1P_5z8D-_18MG42oUfMBS2ExUE4_hfDwJ_nZ3iIUyeDJjGW0GGiS2/pub?embedded=true"></iframe>
+
+    <iframe id="terms" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vRkdVUb6AZfNEwhvz8Qk0WroqmsqCK3MWZucytfoHNRvmcNUCd45BTJr-c_LzxNhZwYG6kT0r6nrVbV/pub?embedded=true"></iframe>
+
+    <div class="footer">
+      <p>© RoosterGoose LLC. All Rights Reserved.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleIframe(id) {
+    const iframes = document.querySelectorAll('.legal-iframe');
+    iframes.forEach(el => {
+      el.style.display = (el.id === id && el.style.display !== 'block') ? 'block' : 'none';
+    });
+  }
+
+  window.onload = function () {
+    setTimeout(() => {
+      document.getElementById("splash").classList.add("fade-out");
+      setTimeout(() => {
+        document.getElementById("splash").style.display = "none";
+        document.getElementById("browser").classList.add("show");
+      }, 800);
+    }, 2500);
+  };
+</script>
+</body>
+</html>
