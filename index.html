@@ -581,44 +581,47 @@ window.onload = function () {
     }, 2000);
   }, 5000); // splash duration
 };
-         
-         // Toggle Legal iFrames
-         function toggleIframe(id) {
-           const iframes = document.querySelectorAll('.legal-iframe');
-           iframes.forEach(el => {
-             el.style.display = (el.id === id && el.style.display !== 'block') ? 'block' : 'none';
-           });
-         
-           const loadingIndicator = document.querySelector(".loading-indicator");
-           const statusText = document.querySelector(".status-text");
-         
-           loadingIndicator.style.opacity = "1";
-           statusText.textContent = "Loading document...";
-         
-           setTimeout(function() {
-             loadingIndicator.style.opacity = "0";
-             statusText.textContent = "Done";
-           }, 800);
-         }
-         
-         // Classic Safari button effects
-         document.querySelectorAll('.nav-btn, .btn').forEach(button => {
-           button.addEventListener('mousedown', function() {
-             this.style.opacity = '0.7';
-           });
-           button.addEventListener('mouseup', function() {
-             this.style.opacity = '1';
-           });
-           button.addEventListener('mouseleave', function() {
-             this.style.opacity = '1';
-           });
-         });
-         
-         // Contact form handler (no redirect, clears form)
-         document.getElementById('contact-form').addEventListener('submit', function (e) {
+
+// Toggle Legal iFrames
+function toggleIframe(id) {
+  const iframes = document.querySelectorAll('.legal-iframe');
+  iframes.forEach(el => {
+    el.style.display = (el.id === id && el.style.display !== 'block') ? 'block' : 'none';
+  });
+
+  const loadingIndicator = document.querySelector(".loading-indicator");
+  const statusText = document.querySelector(".status-text");
+
+  loadingIndicator.style.opacity = "1";
+  statusText.textContent = "Loading document...";
+
+  setTimeout(function() {
+    loadingIndicator.style.opacity = "0";
+    statusText.textContent = "Done";
+  }, 800);
+}
+
+// Classic Safari button effects
+document.querySelectorAll('.nav-btn, .btn').forEach(button => {
+  button.addEventListener('mousedown', function() {
+    this.style.opacity = '0.7';
+  });
+  button.addEventListener('mouseup', function() {
+    this.style.opacity = '1';
+  });
+  button.addEventListener('mouseleave', function() {
+    this.style.opacity = '1';
+  });
+});
+
+// Contact form handler (clears form on submit, shows confirmation only on success)
+document.getElementById('contact-form').addEventListener('submit', function (e) {
   e.preventDefault();
   const form = this;
   const formData = new FormData(form);
+
+  // Clear the form immediately on submit
+  form.reset();
 
   fetch(form.action, {
     method: "POST",
@@ -626,7 +629,7 @@ window.onload = function () {
   })
   .then(response => {
     if (response.ok) {
-      form.reset();
+      // Only show confirmation message if submission is successful
       document.getElementById('confirmation-message').style.display = "inline";
     } else {
       alert("Submission failed. Please try again.");
@@ -637,17 +640,19 @@ window.onload = function () {
     console.error(error);
   });
 });
-         
-         // Scroll behavior
-         document.querySelector('.contact-menu-item').addEventListener('click', function() {
-           document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
-         });
-         
-         document.getElementById('contact-bookmark').addEventListener('click', function() {
-           document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
-         });
-         
-         document.getElementById('home-bookmark').addEventListener('click', function() {
-           window.location.reload();
-         });
-      </script>
+
+// Scroll behavior
+document.querySelector('.contact-menu-item').addEventListener('click', function() {
+  document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById('contact-bookmark').addEventListener('click', function() {
+  document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById('home-bookmark').addEventListener('click', function() {
+  window.location.reload();
+});
+</script>
+
+
