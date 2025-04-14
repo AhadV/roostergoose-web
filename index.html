@@ -1,788 +1,813 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8" />
-      <title>RoosterGoose — Clucking With Ideas</title>
-      <!-- Add favicon link -->
-      <link rel="icon" href="rg_favicon.png" type="image/png">
-      <style>
-         /* Core 2008 Safari Style */
-         html, body {
-         margin: 0;
-         padding: 0;
-         font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
-         background-color: #e8e8e8;
-         color: #333;
-         -webkit-font-smoothing: subpixel-antialiased;
-         }
-         /* Browser Shell Styling */
-         .safari-window {
-         width: 1100px;
-         max-width: 1400px;
-         min-width: 320px;
-         min-height: 400px;
-         margin: 20px auto;
-         border-radius: 8px 8px 6px 6px;
-         box-shadow: 0 4px 18px rgba(0,0,0,0.4);
-         background: #fff;
-         overflow: hidden;
-         display: none;
-         box-sizing: border-box;
-         position: relative;
-         }
-         .resize-handle {
-         position: absolute;
-         background: linear-gradient(to bottom, #d8d8d8, #a0a0a0);
-         border: 1px solid #7e7e7e;
-         border-radius: 3px;
-         z-index: 10;
-         cursor: pointer;
-         }
-         .resize-handle:hover {
-         background: linear-gradient(to bottom, #e0e0e0, #b0b0b0);
-         }
-         .resize-se {
-         width: 12px;
-         height: 12px;
-         bottom: -6px;
-         right: -6px;
-         cursor: se-resize;
-         }
-         .resize-e {
-         width: 8px;
-         height: 50px;
-         right: -4px;
-         top: 50%;
-         transform: translateY(-50%);
-         cursor: e-resize;
-         }
-         .resize-s {
-         width: 50px;
-         height: 8px;
-         bottom: -4px;
-         left: 50%;
-         transform: translateX(-50%);
-         cursor: s-resize;
-         }
-         /* Title Bar */
-         .title-bar {
-         height: 22px;
-         background: linear-gradient(to bottom, #DCDCDC, #AAAAAA);
-         border-radius: 5px 5px 0 0;
-         border-bottom: 1px solid #7e7e7e;
-         display: flex;
-         align-items: center;
-         padding: 0 7px;
-         position: relative;
-         }
-         /* Window Buttons */
-         .window-buttons {
-         display: flex;
-         gap: 6px;
-         }
-         .btn {
-         width: 12px;
-         height: 12px;
-         border-radius: 50%;
-         box-shadow: 0 1px 0 rgba(255,255,255,0.5);
-         position: relative;
-         cursor: pointer;
-         }
-         .btn:after {
-         content: "";
-         position: absolute;
-         top: 1px;
-         left: 1px;
-         right: 1px;
-         bottom: 1px;
-         border-radius: 50%;
-         }
-         .btn.close {
-         background: linear-gradient(to bottom, #ff7e6d, #bc544b);
-         border: 1px solid #914b44;
-         }
-         .btn.minimize {
-         background: linear-gradient(to bottom, #f9e677, #cdad2d);
-         border: 1px solid #9e8c28;
-         }
-         .btn.expand {
-         background: linear-gradient(to bottom, #7be07b, #35a535);
-         border: 1px solid #29752a;
-         }
-         .btn.close:after,
-         .btn.minimize:after,
-         .btn.expand:after {
-         background: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.2));
-         }
-         /* Menu Bar */
-         .menu-bar {
-         height: 20px;
-         background: linear-gradient(to bottom, #f0f0f0, #d8d8d8);
-         border-bottom: 1px solid #aaa;
-         display: flex;
-         align-items: center;
-         padding: 0 10px;
-         font-size: 12px;
-         }
-         .menu-item {
-         padding: 2px 8px;
-         color: #333;
-         cursor: pointer;
-         border-radius: 3px;
-         }
-         .menu-item:hover {
-         background-color: rgba(0,0,0,0.05);
-         }
-         .apple-logo {
-         width: 14px;
-         height: 14px;
-         margin-right: 10px;
-         }
-         .window-title {
-         position: absolute;
-         width: 100%;
-         text-align: center;
-         left: 0;
-         font-size: 13px;
-         color: #444;
-         text-shadow: 0 1px 0 rgba(255,255,255,0.7);
-         font-weight: bold;
-         pointer-events: none;
-         }
-         /* Toolbar */
-         .toolbar {
-         height: 44px;
-         background: linear-gradient(to bottom, #dee1e6, #b0b8c2);
-         border-bottom: 1px solid #7b7b7b;
-         display: flex;
-         align-items: center;
-         padding: 0 10px;
-         }
-         /* Navigation Buttons */
-         .nav-buttons {
-         display: flex;
-         gap: 8px;
-         }
-         .nav-btn {
-         width: 32px;
-         height: 30px;
-         background: linear-gradient(to bottom, #f6f6f6, #d4d4d4);
-         border: 1px solid #8e8e8e;
-         border-radius: 5px;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         cursor: pointer;
-         box-shadow: 0 1px 0 rgba(255,255,255,0.8);
-         }
-         .nav-btn:active {
-         background: linear-gradient(to bottom, #d4d4d4, #e4e4e4);
-         box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
-         }
-         .nav-btn svg {
-         width: 15px;
-         height: 15px;
-         fill: #3c3c3c;
-         }
-         /* Address Bar */
-         .address-bar {
-         margin-left: 10px;
-         flex-grow: 1;
-         height: 25px;
-         background: white;
-         border: 1px solid #8a8a8a;
-         border-radius: 4px;
-         display: flex;
-         align-items: center;
-         box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-         position: relative;
-         padding: 0 5px;
-         overflow: hidden;
-         }
-         .address-favicon {
-         width: 16px;
-         height: 16px;
-         margin-right: 5px;
-         }
-         .address-input {
-         font-size: 13px;
-         color: #222;
-         font-family: "Lucida Grande", sans-serif;
-         width: 100%;
-         border: none;
-         background: transparent;
-         outline: none;
-         }
-         .blue-progress {
-         position: absolute;
-         height: 100%;
-         width: 0%;
-         background: rgba(90, 152, 241, 0.3);
-         left: 0;
-         top: 0;
-         border-radius: 4px;
-         animation: loadProgress 2s ease-in-out forwards;
-         pointer-events: none;
-         }
-         @keyframes loadProgress {
-         0% { width: 0%; }
-         70% { width: 90%; }
-         100% { width: 100%; }
-         }
-         /* Bookmark Bar */
-         .bookmark-bar {
-         height: 26px;
-         background: linear-gradient(to bottom, #e6e6e6, #d1d1d1);
-         border-bottom: 1px solid #979797;
-         display: flex;
-         align-items: center;
-         padding: 0 10px;
-         overflow-x: auto;
-         white-space: nowrap;
-         }
-         .bookmark {
-         font-size: 11px;
-         color: #333;
-         padding: 2px 8px;
-         border-radius: 3px;
-         display: flex;
-         align-items: center;
-         margin-right: 12px;
-         text-shadow: 0 1px 0 rgba(255,255,255,0.7);
-         cursor: pointer;
-         }
-         .bookmark:hover {
-         background: rgba(0,0,0,0.05);
-         }
-         .bookmark-icon {
-         display: inline-block;
-         width: 14px;
-         height: 14px;
-         margin-right: 5px;
-         background-color: #4b0082;
-         mask-size: contain;
-         -webkit-mask-size: contain;
-         mask-repeat: no-repeat;
-         -webkit-mask-repeat: no-repeat;
-         }
-         .bookmark-home {
-         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
-         -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
-         }
-         .bookmark-contact {
-         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
-         -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
-         }
-         .bookmark-leaf {
-         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.05 8.05c-2.73 2.73-2.73 7.17 0 9.9C7.42 19.32 9.21 20 11 20s3.58-.68 4.95-2.05C19.43 14.47 20 4 20 4S9.53 4.57 6.05 8.05zm8.49 8.49c-.95.94-2.2 1.46-3.54 1.46-.89 0-1.73-.25-2.48-.68.92-2.88 2.62-5.41 4.97-7.37 1.31-1.11 2.82-2.02 4.45-2.68-1.96 4.89-2.07 7.36-3.4 9.27z'/%3E%3C/svg%3E");
-         -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.05 8.05c-2.73 2.73-2.73 7.17 0 9.9C7.42 19.32 9.21 20 11 20s3.58-.68 4.95-2.05C19.43 14.47 20 4 20 4S9.53 4.57 6.05 8.05zm8.49 8.49c-.95.94-2.2 1.46-3.54 1.46-.89 0-1.73-.25-2.48-.68.92-2.88 2.62-5.41 4.97-7.37 1.31-1.11 2.82-2.02 4.45-2.68-1.96 4.89-2.07 7.36-3.4 9.27z'/%3E%3C/svg%3E");
-         }
-         /* Content Area */
-         .content {
-         background: white;
-         min-height: 300px;
-         padding: 20px;
-         font-size: 13px;
-         line-height: 1.5;
-         overflow-y: auto;
-         max-height: none;
-         height: calc(100% - 133px);
-         box-sizing: border-box;
-         text-align: center; /* Center main text */
-         }
-         h1 {
-         color: #4b0082;
-         font-size: 30px;
-         margin-bottom: 12px;
-         }
-         .badge {
-         background: gold;
-         color: black;
-         font-weight: bold;
-         font-family: "Courier New", monospace;
-         border-radius: 4px;
-         padding: 2px 8px;
-         margin-left: 6px;
-         display: inline-block; /* Aligns neatly in list */
-         box-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Retro emboss */
-         }
-         .app-title {
-         font-weight: bold;
-         color: #4b0082;
-         text-align: left; /* Left-align for apps */
-         }
-         /* Status Bar */
-         .status-bar {
-         height: 20px;
-         background: linear-gradient(to bottom, #e0e0e0, #c0c0c0);
-         border-top: 1px solid #a5a5a5;
-         border-radius: 0 0 6px 6px;
-         display: flex;
-         align-items: center;
-         padding: 0 10px;
-         font-size: 11px;
-         color: #444;
-         }
-         .status-text {
-         flex-grow: 1;
-         }
-         .loading-indicator {
-         width: 16px;
-         height: 16px;
-         border: 2px solid #aaa;
-         border-top-color: #5a98f1;
-         border-radius: 50%;
-         margin-right: 8px;
-         animation: spin 1s linear infinite;
-         opacity: 0;
-         }
-         @keyframes spin {
-         to { transform: rotate(360deg); }
-         }
-         /* Updated Mac OS Classic Splash Screen */
-         #splash {
-         position: fixed;
-         top: 0; left: 0;
-         width: 100%; height: 100%;
-         background-color: #f2f2f2;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         flex-direction: column;
-         z-index: 9999;
-         transition: opacity 1s ease;
-         }
-         #splash-logo {
-         font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
-         font-size: 64px;
-         font-weight: bold;
-         color: #333;
-         margin-bottom: 20px;
-         letter-spacing: -2px;
-         }
-         .mac-loading-bar {
-         width: 300px;
-         height: 16px;
-         background-color: #dedede;
-         border: 1px solid #888;
-         border-radius: 8px;
-         overflow: hidden;
-         box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-         position: relative;
-         }
-         .mac-loading-progress {
-         height: 100%;
-         width: 0%;
-         background: linear-gradient(to right, #aaaaaa, #cccccc);
-         animation: macLoadProgress 2.5s ease-in-out forwards;
-         }
-         @keyframes macLoadProgress {
-         0% { width: 0%; }
-         20% { width: 30%; }
-         50% { width: 70%; }
-         80% { width: 90%; }
-         100% { width: 100%; }
-         }
-         .fade-out {
-         opacity: 0;
-         }
-         /* Safari-specific Elements */
-         .contact-block {
-         max-width: 680px;
-         margin: 40px auto;
-         padding: 24px 30px;
-         border: 1px solid #ccc;
-         border-radius: 10px;
-         background: linear-gradient(to bottom, #fdfdfd, #eaeaea);
-         box-shadow: 0 0 0 4px #ccc, 0 2px 6px rgba(0,0,0,0.2);
-         font-family: "Lucida Grande", sans-serif;
-         }
-         .contact-block h1 {
-         text-align: center;
-         margin-bottom: 25px;
-         color: #4b0082;
-         }
-         .contact-block .form-row {
-         display: flex;
-         gap: 12px;
-         margin-bottom: 18px;
-         }
-         .contact-block input,
-         .contact-block textarea {
-         width: 100%;
-         padding: 10px 12px;
-         font-family: "Courier New", monospace;
-         font-size: 14px;
-         border: 1px solid #999;
-         border-radius: 6px;
-         background-color: #fff;
-         box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-         }
-         .contact-block textarea {
-         resize: vertical;
-         }
-         .contact-block button {
-         background: #4b0082;
-         color: white;
-         font-weight: bold;
-         font-family: "Courier New", monospace;
-         font-size: 15px;
-         border: none;
-         border-radius: 6px;
-         padding: 12px 20px;
-         width: 100%;
-         cursor: pointer;
-         margin-top: 10px;
-         box-shadow: inset 0 -1px 0 rgba(255,255,255,0.2);
-         transition: background 0.2s ease;
-         }
-         .contact-block button:hover {
-         background: #3c006a;
-         }
-         .contact-block button:active {
-         background: #2a004d;
-         box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
-         }
-         .legal-links {
-         margin-top: 40px;
-         text-align: center;
-         }
-         .legal-links a {
-         margin: 0 10px;
-         color: #4b0082;
-         text-decoration: underline;
-         cursor: pointer;
-         font-family: "Courier New", monospace;
-         }
-         .legal-iframe {
-         display: none;
-         margin-top: 10px;
-         width: 100%;
-         height: 400px;
-         border: 1px solid #ccc;
-         border-radius: 4px;
-         }
-         .footer {
-         margin-top: 60px;
-         text-align: center;
-         font-size: 12px;
-         color: #666;
-         font-family: "Lucida Grande", sans-serif;
-         }
-         .hidden-honey {
-         display: none;
-         }
-         /* Classic Safari Aqua Appearance */
-         ::-webkit-scrollbar {
-         width: 8px;
-         height: 8px;
-         }
-         ::-webkit-scrollbar-track {
-         background: #f1f1f1;
-         border-radius: 10px;
-         }
-         ::-webkit-scrollbar-thumb {
-         background: linear-gradient(to bottom, #9ba2ab, #5c6573);
-         border-radius: 10px;
-         border: 1px solid #464d59;
-         }
-         /* Mobile Adjustments */
-         @media screen and (max-width: 768px) {
-         .safari-window {
-         width: 100vw;
-         max-width: 100%;
-         margin: 10px 0;
-         border-radius: 0;
-         }
-         .content {
-         padding: 15px;
-         max-height: none;
-         min-height: auto;
-         }
-         .resize-handle {
-         display: none;
-         }
-         }
-         .app-list {
-         text-align: left; /* Override centering for apps */
-         max-width: 680px; /* Match contact-block width */
-         margin: 0 auto; /* Center container */
-         }
-         .app-item {
-         margin-bottom: 20px; /* Space between apps */
-         padding-left: 10px; /* Slight indent */
-         }
-         .app-item p {
-         margin: 5px 0; /* Tighten description spacing */
-         text-align: left; /* Ensure description is left-aligned */
-         }
-         .app-divider {
-         height: 1px;
-         background: linear-gradient(to right, #d8d8d8, #a0a0a0); /* Retro gradient */
-         margin: 10px 0;
-         }
-      </style>
-   </head>
-   <body>
-      <!-- Updated Mac OS Classic Splash Screen -->
-      <div id="splash">
-         <div id="splash-logo">RG</div>
-         <div class="mac-loading-bar">
-            <div class="mac-loading-progress"></div>
-         </div>
-      </div>
-      <!-- Safari 2008 Window -->
-      <div class="safari-window">
-         <!-- Title Bar -->
-         <div class="title-bar">
-            <div class="window-buttons">
-               <div class="btn close"></div>
-               <div class="btn minimize"></div>
-               <div class="btn expand"></div>
-            </div>
-            <div class="window-title">RoosterGoose — Always Clucking With Ideas</div>
-         </div>
-         <!-- Menu Bar -->
-         <div class="menu-bar">
-            <div class="apple-logo">
-               <svg viewBox="0 0 24 24" width="14" height="14">
-                  <path fill="#333" d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"></path>
-               </svg>
-            </div>
-            <div class="menu-item">File</div>
-            <div class="menu-item">Edit</div>
-            <div class="menu-item">View</div>
-            <div class="menu-item contact-menu-item">Contact</div>
-         </div>
-         <!-- Toolbar -->
-         <div class="toolbar">
-            <div class="nav-buttons">
-               <div class="nav-btn">
-                  <svg viewBox="0 0 24 24">
-                     <path d="M15.5 19L8.5 12L15.5 5V19Z"/>
-                  </svg>
-               </div>
-               <div class="nav-btn">
-                  <svg viewBox="0 0 24 24">
-                     <path d="M8.5 5L15.5 12L8.5 19V5Z"/>
-                  </svg>
-               </div>
-            </div>
-            <div class="address-bar">
-               <img class="address-favicon" src="rg_favicon.png" alt="RG Favicon">
-               <input class="address-input" type="text" value="https://roostergoose.app" readonly>
-               <div class="blue-progress"></div>
-            </div>
-         </div>
-         <!-- Bookmark Bar -->
-         <div class="bookmark-bar">
-            <div class="bookmark" id="home-bookmark">
-               <div class="bookmark-icon bookmark-home"></div>
-               Home
-            </div>
-            <div class="bookmark" id="contact-bookmark">
-               <div class="bookmark-icon bookmark-contact"></div>
-               Contact
-            </div>
-            <div class="bookmark">
-               <div class="bookmark-icon bookmark-leaf"></div>
-               <a href="https://leafylens.app" target="_blank" style="text-decoration:none; color:inherit;">LeafyLens</a>
-            </div>
-         </div>
-         <!-- Content Area -->
-         <div class="content">
-            <h1>RoosterGoose</h1>
-            <p>We hatch ideas, peck at bugs, and ship useful iOS apps with just the right amount of feathered flair. 🐓🪿</p>
-            <h2>Our Apps</h2>
-            <div class="app-list">
-               <div class="app-item">
-                  <p class="app-title">🪪 NotarizeHQ <a href="https://www.producthunt.com/products/notarytrusty-com" target="_blank" class="badge">RIP 💀</a></p>
-                  <p>The notarization app the internet needed... until it didn't. Gone, but notary-forgotten.</p>
-               </div>
-               <div class="app-divider"></div>
-               <div class="app-item">
-                  <p class="app-title">😁 SmileMaxx <a href="https://apps.apple.com/us/app/smilemaxx/id6737210322" target="_blank" class="badge">Live on iOS</a></p>
-                  <p>Because your camera roll deserves pearly whites and maxxed-out smiles.</p>
-               </div>
-               <div class="app-divider"></div>
-               <div class="app-item">
-                  <p class="app-title">🌿 LeafyLens <span class="badge">Coming Soon</span></p>
-                  <p>Plant care meets AI magic. Snap, diagnose, and thrive. Your houseplants are about to get pampered.</p>
-               </div>
-            </div>
-            <div class="contact-block" id="contact-section">
-               <!-- ... unchanged ... -->
-               <h1>Contact RoosterGoose</h1>
-               <form action="https://formsubmit.co/support@roostergoose.co" method="POST" id="contact-form">
-                  <input type="hidden" name="_captcha" value="false">
-                  <input type="hidden" name="_next" value="https://roostergoose.app/#contact">
-                  <!-- Honeypot -->
-                  <input type="text" name="_honey" class="hidden-honey">
-                  <!-- Disable Captcha -->
-                  <input type="hidden" name="_captcha" value="false">
-                  <div class="form-row">
-                     <input type="text" name="name" placeholder="Full Name" required>
-                     <input type="email" name="email" placeholder="Email Address" required>
-                  </div>
-                  <div class="form-row" style="flex-direction: column;">
-                     <textarea name="message" rows="8" placeholder="Your Message" required></textarea>
-                  </div>
-                  <button type="submit">Submit</button>
-                  <span id="confirmation-message" style="display:none; color: green; margin-top: 10px; font-family: 'Courier New', monospace;">
-                  ✅ Message sent! Check your email for confirmation.
-                  </span>
-               </form>
-            </div>
-            <div class="legal-links">
-               <h2>Legal Stuff</h2>
-               <a onclick="toggleIframe('privacy')">Privacy Policy</a>
-               <a onclick="toggleIframe('eula')">EULA</a>
-               <a onclick="toggleIframe('terms')">Terms of Use</a>
-            </div>
-            <iframe id="privacy" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vTfrY-nDMoEKnxlH3f8tYQWNi_5t2xTIwxRlCTJ-4ahmHO2Q1yJR0wjEHeH2pof4A73ukEO9gZgshtY/pub?embedded=true"></iframe>
-            <iframe id="eula" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vSw5am1nA901wtB64JonUjzo4L1P_5z8D-_18MG42oUfMBS2ExUE4_hfDwJ_nZ3iIUyeDJjGW0GGiS2/pub?embedded=true"></iframe>
-            <iframe id="terms" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vRkdVUb6AZfNEwhvz8Qk0WroqmsqCK3MWZucytfoHNRvmcNUCd45BTJr-c_LzxNhZwYG6kT0r6nrVbV/pub?embedded=true"></iframe>
-            <div class="footer">
-               <p>© RoosterGoose LLC. All Rights Reserved.</p>
-            </div>
-         </div>
-         <!-- Status Bar -->
-         <div class="status-bar">
-            <div class="loading-indicator"></div>
-            <div class="status-text">Done</div>
-         </div>
-         <!-- Resize Handles -->
-         <div class="resize-handle resize-se"></div>
-         <div class="resize-handle resize-e"></div>
-         <div class="resize-handle resize-s"></div>
-      </div>
-      <script>
-         window.onload = function () {
-            setTimeout(function () {
-               document.getElementById("splash").style.display = "none";
-               document.querySelector(".safari-window").style.display = "block";
-               const loadingIndicator = document.querySelector(".loading-indicator");
-               const statusText = document.querySelector(".status-text");
-               loadingIndicator.style.opacity = "1";
-               statusText.textContent = "Loading roostergoose.app...";
-               setTimeout(function () {
-                  loadingIndicator.style.opacity = "0";
-                  statusText.textContent = "Done";
-               }, 2000);
-            }, 3000);
-         };
-         
-         // Toggle Legal iFrames
-         function toggleIframe(id) {
-            const iframes = document.querySelectorAll('.legal-iframe');
-            iframes.forEach(el => {
-               el.style.display = (el.id === id && el.style.display !== 'block') ? 'block' : 'none';
-            });
-            const loadingIndicator = document.querySelector(".loading-indicator");
-            const statusText = document.querySelector(".status-text");
-            loadingIndicator.style.opacity = "1";
-            statusText.textContent = "Loading document...";
-            setTimeout(function() {
-               loadingIndicator.style.opacity = "0";
-               statusText.textContent = "Done";
-            }, 800);
-         }
-         
-         // Classic Safari button effects
-         document.querySelectorAll('.nav-btn, .btn').forEach(button => {
-            button.addEventListener('mousedown', function() {
-               this.style.opacity = '0.7';
-            });
-            button.addEventListener('mouseup', function() {
-               this.style.opacity = '1';
-            });
-            button.addEventListener('mouseleave', function() {
-               this.style.opacity = '1';
-            });
-         });
-         
-         // Contact form handler
-         document.getElementById('contact-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const form = this;
-            const formData = new FormData(form);
-            form.reset();
-            fetch(form.action, {
-               method: "POST",
-               body: formData
-            })
-            .then(response => {
-               if (response.ok) {
-                  document.getElementById('confirmation-message').style.display = "inline";
-               } else {
-                  alert("Submission failed. Please try again.");
-               }
-            })
-            .catch(error => {
-               alert("Something went wrong. Please try again.");
-               console.error(error);
-            });
-         });
-         
-         // Scroll behavior
-         document.querySelector('.contact-menu-item').addEventListener('click', function() {
-            document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
-         });
-         
-         document.getElementById('contact-bookmark').addEventListener('click', function() {
-            document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
-         });
-         
-         document.getElementById('home-bookmark').addEventListener('click', function() {
-            window.location.reload();
-         });
-         
-         // Resize functionality
-         const safariWindow = document.querySelector('.safari-window');
-         let isResizing = false;
-         let resizeType = '';
-         let startX, startY, startWidth, startHeight;
-         
-         function startResize(e, type) {
-            isResizing = true;
-            resizeType = type;
-            startX = e.clientX;
-            startY = e.clientY;
-            startWidth = safariWindow.offsetWidth;
-            startHeight = safariWindow.offsetHeight;
-            document.addEventListener('mousemove', resize);
-            document.addEventListener('mouseup', stopResize);
-         }
-         
-         function resize(e) {
-            if (!isResizing) return;
-            let newWidth = startWidth;
-            let newHeight = startHeight;
-         
-            if (resizeType === 'se' || resizeType === 'e') {
-               newWidth = Math.min(Math.max(startWidth + (e.clientX - startX), 320), 1400);
+    <head>
+        <meta charset="UTF-8" />
+        <title>RoosterGoose — Clucking With Ideas</title>
+        <!-- Add favicon link -->
+        <link rel="icon" href="rg_favicon.png" type="image/png" />
+        <style>
+            /* Core 2008 Safari Style */
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #e8e8e8;
+                color: #333;
+                -webkit-font-smoothing: subpixel-antialiased;
             }
-            if (resizeType === 'se' || resizeType === 's') {
-               newHeight = Math.max(startHeight + (e.clientY - startY), 400);
+            /* Browser Shell Styling */
+            .safari-window {
+                width: 1100px;
+                max-width: 1400px;
+                min-width: 320px;
+                min-height: 400px;
+                margin: 20px auto;
+                border-radius: 8px 8px 6px 6px;
+                box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+                background: #fff;
+                overflow: hidden;
+                display: none;
+                box-sizing: border-box;
+                position: relative;
             }
-         
-            safariWindow.style.width = `${newWidth}px`;
-            if (resizeType !== 'e') {
-               safariWindow.style.height = `${newHeight}px`;
+            .resize-handle {
+                position: absolute;
+                background: linear-gradient(to bottom, #d8d8d8, #a0a0a0);
+                border: 1px solid #7e7e7e;
+                border-radius: 3px;
+                z-index: 10;
+                cursor: pointer;
             }
-         }
-         
-         function stopResize() {
-            isResizing = false;
-            document.removeEventListener('mousemove', resize);
-            document.removeEventListener('mouseup', stopResize);
-         }
-         
-         document.querySelectorAll('.resize-handle').forEach(handle => {
-            handle.addEventListener('mousedown', (e) => {
-               startResize(e, handle.classList.contains('resize-se') ? 'se' : handle.classList.contains('resize-e') ? 'e' : 's');
+            .resize-handle:hover {
+                background: linear-gradient(to bottom, #e0e0e0, #b0b0b0);
+            }
+            .resize-se {
+                width: 12px;
+                height: 12px;
+                bottom: -6px;
+                right: -6px;
+                cursor: se-resize;
+            }
+            .resize-e {
+                width: 8px;
+                height: 50px;
+                right: -4px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: e-resize;
+            }
+            .resize-s {
+                width: 50px;
+                height: 8px;
+                bottom: -4px;
+                left: 50%;
+                transform: translateX(-50%);
+                cursor: s-resize;
+            }
+            /* Title Bar */
+            .title-bar {
+                height: 22px;
+                background: linear-gradient(to bottom, #dcdcdc, #aaaaaa);
+                border-radius: 5px 5px 0 0;
+                border-bottom: 1px solid #7e7e7e;
+                display: flex;
+                align-items: center;
+                padding: 0 7px;
+                position: relative;
+            }
+            /* Window Buttons */
+            .window-buttons {
+                display: flex;
+                gap: 6px;
+            }
+            .btn {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+                position: relative;
+                cursor: pointer;
+            }
+            .btn:after {
+                content: "";
+                position: absolute;
+                top: 1px;
+                left: 1px;
+                right: 1px;
+                bottom: 1px;
+                border-radius: 50%;
+            }
+            .btn.close {
+                background: linear-gradient(to bottom, #ff7e6d, #bc544b);
+                border: 1px solid #914b44;
+            }
+            .btn.minimize {
+                background: linear-gradient(to bottom, #f9e677, #cdad2d);
+                border: 1px solid #9e8c28;
+            }
+            .btn.expand {
+                background: linear-gradient(to bottom, #7be07b, #35a535);
+                border: 1px solid #29752a;
+            }
+            .btn.close:after,
+            .btn.minimize:after,
+            .btn.expand:after {
+                background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
+            }
+            /* Menu Bar */
+            .menu-bar {
+                height: 20px;
+                background: linear-gradient(to bottom, #f0f0f0, #d8d8d8);
+                border-bottom: 1px solid #aaa;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+                font-size: 12px;
+            }
+            .menu-item {
+                padding: 2px 8px;
+                color: #333;
+                cursor: pointer;
+                border-radius: 3px;
+            }
+            .menu-item:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+            .apple-logo {
+                width: 14px;
+                height: 14px;
+                margin-right: 10px;
+            }
+            .window-title {
+                position: absolute;
+                width: 100%;
+                text-align: center;
+                left: 0;
+                font-size: 13px;
+                color: #444;
+                text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+                font-weight: bold;
+                pointer-events: none;
+            }
+            /* Toolbar */
+            .toolbar {
+                height: 44px;
+                background: linear-gradient(to bottom, #dee1e6, #b0b8c2);
+                border-bottom: 1px solid #7b7b7b;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+            }
+            /* Navigation Buttons */
+            .nav-buttons {
+                display: flex;
+                gap: 8px;
+            }
+            .nav-btn {
+                width: 32px;
+                height: 30px;
+                background: linear-gradient(to bottom, #f6f6f6, #d4d4d4);
+                border: 1px solid #8e8e8e;
+                border-radius: 5px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+            }
+            .nav-btn:active {
+                background: linear-gradient(to bottom, #d4d4d4, #e4e4e4);
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+            }
+            .nav-btn svg {
+                width: 15px;
+                height: 15px;
+                fill: #3c3c3c;
+            }
+            /* Address Bar */
+            .address-bar {
+                margin-left: 10px;
+                flex-grow: 1;
+                height: 25px;
+                background: white;
+                border: 1px solid #8a8a8a;
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+                position: relative;
+                padding: 0 5px;
+                overflow: hidden;
+            }
+            .address-favicon {
+                width: 16px;
+                height: 16px;
+                margin-right: 5px;
+            }
+            .address-input {
+                font-size: 13px;
+                color: #222;
+                font-family: "Lucida Grande", sans-serif;
+                width: 100%;
+                border: none;
+                background: transparent;
+                outline: none;
+            }
+            .blue-progress {
+                position: absolute;
+                height: 100%;
+                width: 0%;
+                background: rgba(90, 152, 241, 0.3);
+                left: 0;
+                top: 0;
+                border-radius: 4px;
+                animation: loadProgress 2s ease-in-out forwards;
+                pointer-events: none;
+            }
+            @keyframes loadProgress {
+                0% {
+                    width: 0%;
+                }
+                70% {
+                    width: 90%;
+                }
+                100% {
+                    width: 100%;
+                }
+            }
+            /* Bookmark Bar */
+            .bookmark-bar {
+                height: 26px;
+                background: linear-gradient(to bottom, #e6e6e6, #d1d1d1);
+                border-bottom: 1px solid #979797;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .bookmark {
+                font-size: 11px;
+                color: #333;
+                padding: 2px 8px;
+                border-radius: 3px;
+                display: flex;
+                align-items: center;
+                margin-right: 12px;
+                text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+                cursor: pointer;
+            }
+            .bookmark:hover {
+                background: rgba(0, 0, 0, 0.05);
+            }
+            .bookmark-icon {
+                display: inline-block;
+                width: 14px;
+                height: 14px;
+                margin-right: 5px;
+                background-color: #4b0082;
+                mask-size: contain;
+                -webkit-mask-size: contain;
+                mask-repeat: no-repeat;
+                -webkit-mask-repeat: no-repeat;
+            }
+            .bookmark-home {
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
+                -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z'/%3E%3C/svg%3E");
+            }
+            .bookmark-contact {
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+                -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+            }
+            .bookmark-leaf {
+                mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.05 8.05c-2.73 2.73-2.73 7.17 0 9.9C7.42 19.32 9.21 20 11 20s3.58-.68 4.95-2.05C19.43 14.47 20 4 20 4S9.53 4.57 6.05 8.05zm8.49 8.49c-.95.94-2.2 1.46-3.54 1.46-.89 0-1.73-.25-2.48-.68.92-2.88 2.62-5.41 4.97-7.37 1.31-1.11 2.82-2.02 4.45-2.68-1.96 4.89-2.07 7.36-3.4 9.27z'/%3E%3C/svg%3E");
+                -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.05 8.05c-2.73 2.73-2.73 7.17 0 9.9C7.42 19.32 9.21 20 11 20s3.58-.68 4.95-2.05C19.43 14.47 20 4 20 4S9.53 4.57 6.05 8.05zm8.49 8.49c-.95.94-2.2 1.46-3.54 1.46-.89 0-1.73-.25-2.48-.68.92-2.88 2.62-5.41 4.97-7.37 1.31-1.11 2.82-2.02 4.45-2.68-1.96 4.89-2.07 7.36-3.4 9.27z'/%3E%3C/svg%3E");
+            }
+            /* Content Area */
+            .content {
+                background: white;
+                min-height: 300px;
+                padding: 20px;
+                font-size: 13px;
+                line-height: 1.5;
+                overflow-y: auto;
+                max-height: none;
+                height: calc(100% - 133px);
+                box-sizing: border-box;
+                text-align: center; /* Center main text */
+            }
+            h1 {
+                color: #4b0082;
+                font-size: 30px;
+                margin-bottom: 12px;
+            }
+            .badge {
+                background: gold;
+                color: black;
+                font-weight: bold;
+                font-family: "Courier New", monospace;
+                border-radius: 4px;
+                padding: 2px 8px;
+                margin-left: 6px;
+                display: inline-block; /* Aligns neatly in list */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Retro emboss */
+            }
+            .app-title {
+                font-weight: bold;
+                color: #4b0082;
+                text-align: left; /* Left-align for apps */
+            }
+            /* Status Bar */
+            .status-bar {
+                height: 20px;
+                background: linear-gradient(to bottom, #e0e0e0, #c0c0c0);
+                border-top: 1px solid #a5a5a5;
+                border-radius: 0 0 6px 6px;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+                font-size: 11px;
+                color: #444;
+            }
+            .status-text {
+                flex-grow: 1;
+            }
+            .loading-indicator {
+                width: 16px;
+                height: 16px;
+                border: 2px solid #aaa;
+                border-top-color: #5a98f1;
+                border-radius: 50%;
+                margin-right: 8px;
+                animation: spin 1s linear infinite;
+                opacity: 0;
+            }
+            @keyframes spin {
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+            /* Updated Mac OS Classic Splash Screen */
+            #splash {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #f2f2f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                z-index: 9999;
+                transition: opacity 1s ease;
+            }
+            #splash-logo {
+                font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                font-size: 64px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 20px;
+                letter-spacing: -2px;
+            }
+            .mac-loading-bar {
+                width: 300px;
+                height: 16px;
+                background-color: #dedede;
+                border: 1px solid #888;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+                position: relative;
+            }
+            .mac-loading-progress {
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(to right, #aaaaaa, #cccccc);
+                animation: macLoadProgress 2.5s ease-in-out forwards;
+            }
+            @keyframes macLoadProgress {
+                0% {
+                    width: 0%;
+                }
+                20% {
+                    width: 30%;
+                }
+                50% {
+                    width: 70%;
+                }
+                80% {
+                    width: 90%;
+                }
+                100% {
+                    width: 100%;
+                }
+            }
+            .fade-out {
+                opacity: 0;
+            }
+            /* Safari-specific Elements */
+            .contact-block {
+                max-width: 680px;
+                margin: 40px auto;
+                padding: 24px 30px;
+                border: 1px solid #ccc;
+                border-radius: 10px;
+                background: linear-gradient(to bottom, #fdfdfd, #eaeaea);
+                box-shadow: 0 0 0 4px #ccc, 0 2px 6px rgba(0, 0, 0, 0.2);
+                font-family: "Lucida Grande", sans-serif;
+            }
+            .contact-block h1 {
+                text-align: center;
+                margin-bottom: 25px;
+                color: #4b0082;
+            }
+            .contact-block .form-row {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 18px;
+            }
+            .contact-block input,
+            .contact-block textarea {
+                width: 100%;
+                padding: 10px 12px;
+                font-family: "Courier New", monospace;
+                font-size: 14px;
+                border: 1px solid #999;
+                border-radius: 6px;
+                background-color: #fff;
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+            .contact-block textarea {
+                resize: vertical;
+            }
+            .contact-block button {
+                background: #4b0082;
+                color: white;
+                font-weight: bold;
+                font-family: "Courier New", monospace;
+                font-size: 15px;
+                border: none;
+                border-radius: 6px;
+                padding: 12px 20px;
+                width: 100%;
+                cursor: pointer;
+                margin-top: 10px;
+                box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+                transition: background 0.2s ease;
+            }
+            .contact-block button:hover {
+                background: #3c006a;
+            }
+            .contact-block button:active {
+                background: #2a004d;
+                box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .legal-links {
+                margin-top: 40px;
+                text-align: center;
+            }
+            .legal-links a {
+                margin: 0 10px;
+                color: #4b0082;
+                text-decoration: underline;
+                cursor: pointer;
+                font-family: "Courier New", monospace;
+            }
+            .legal-iframe {
+                display: none;
+                margin-top: 10px;
+                width: 100%;
+                height: 400px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            .footer {
+                margin-top: 60px;
+                text-align: center;
+                font-size: 12px;
+                color: #666;
+                font-family: "Lucida Grande", sans-serif;
+            }
+            .hidden-honey {
+                display: none;
+            }
+            /* Classic Safari Aqua Appearance */
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: linear-gradient(to bottom, #9ba2ab, #5c6573);
+                border-radius: 10px;
+                border: 1px solid #464d59;
+            }
+            /* Mobile Adjustments */
+            @media screen and (max-width: 768px) {
+                .safari-window {
+                    width: 100vw;
+                    max-width: 100%;
+                    margin: 10px 0;
+                    border-radius: 0;
+                }
+                .content {
+                    padding: 15px;
+                    max-height: none;
+                    min-height: auto;
+                }
+                .resize-handle {
+                    display: none;
+                }
+            }
+            .app-list {
+                text-align: left; /* Override centering for apps */
+                max-width: 680px; /* Match contact-block width */
+                margin: 0 auto; /* Center container */
+            }
+            .app-item {
+                margin-bottom: 20px; /* Space between apps */
+                padding-left: 10px; /* Slight indent */
+            }
+            .app-item p {
+                margin: 5px 0; /* Tighten description spacing */
+                text-align: left; /* Ensure description is left-aligned */
+            }
+            .app-divider {
+                height: 1px;
+                background: linear-gradient(to right, #d8d8d8, #a0a0a0); /* Retro gradient */
+                margin: 10px 0;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Updated Mac OS Classic Splash Screen -->
+        <div id="splash">
+            <div id="splash-logo">RG</div>
+            <div class="mac-loading-bar">
+                <div class="mac-loading-progress"></div>
+            </div>
+        </div>
+        <!-- Safari 2008 Window -->
+        <div class="safari-window">
+            <!-- Title Bar -->
+            <div class="title-bar">
+                <div class="window-buttons">
+                    <div class="btn close"></div>
+                    <div class="btn minimize"></div>
+                    <div class="btn expand"></div>
+                </div>
+                <div class="window-title">RoosterGoose — Always Clucking With Ideas</div>
+            </div>
+            <!-- Menu Bar -->
+            <div class="menu-bar">
+                <div class="apple-logo">
+                    <svg viewBox="0 0 24 24" width="14" height="14">
+                        <path
+                            fill="#333"
+                            d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"
+                        ></path>
+                    </svg>
+                </div>
+                <div class="menu-item">File</div>
+                <div class="menu-item">Edit</div>
+                <div class="menu-item">View</div>
+                <div class="menu-item contact-menu-item">Contact</div>
+            </div>
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <div class="nav-buttons">
+                    <div class="nav-btn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M15.5 19L8.5 12L15.5 5V19Z" />
+                        </svg>
+                    </div>
+                    <div class="nav-btn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8.5 5L15.5 12L8.5 19V5Z" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="address-bar">
+                    <img class="address-favicon" src="rg_favicon.png" alt="RG Favicon" />
+                    <input class="address-input" type="text" value="https://roostergoose.app" readonly />
+                    <div class="blue-progress"></div>
+                </div>
+            </div>
+            <!-- Bookmark Bar -->
+            <div class="bookmark-bar">
+                <div class="bookmark" id="home-bookmark">
+                    <div class="bookmark-icon bookmark-home"></div>
+                    Home
+                </div>
+                <div class="bookmark" id="contact-bookmark">
+                    <div class="bookmark-icon bookmark-contact"></div>
+                    Contact
+                </div>
+                <div class="bookmark">
+                    <div class="bookmark-icon bookmark-leaf"></div>
+                    <a href="https://leafylens.app" target="_blank" style="text-decoration: none; color: inherit;">LeafyLens</a>
+                </div>
+            </div>
+            <!-- Content Area -->
+            <div class="content">
+                <h1>RoosterGoose</h1>
+                <p>We hatch ideas, peck at bugs, and ship useful iOS apps with just the right amount of feathered flair. 🐓🪿</p>
+                <h2>Our Apps</h2>
+                <div class="app-list">
+                    <div class="app-item">
+                        <p class="app-title">🪪 NotarizeHQ <a href="https://www.producthunt.com/products/notarytrusty-com" target="_blank" class="badge">RIP 💀</a></p>
+                        <p>The notarization app the internet needed... until it didn't. Gone, but notary-forgotten.</p>
+                    </div>
+                    <div class="app-divider"></div>
+                    <div class="app-item">
+                        <p class="app-title">😁 SmileMaxx <a href="https://apps.apple.com/us/app/smilemaxx/id6737210322" target="_blank" class="badge">Live on iOS</a></p>
+                        <p>Because your camera roll deserves pearly whites and maxxed-out smiles.</p>
+                    </div>
+                    <div class="app-divider"></div>
+                    <div class="app-item">
+                        <p class="app-title">🌿 LeafyLens <a href="https://leafylens.app" target="_blank" class="badge">Live on iOS</a></p>
+                        <p>Plant care meets AI magic. Snap, diagnose, and thrive. Your houseplants are about to get pampered.</p>
+                    </div>
+                </div>
+                <div class="contact-block" id="contact-section">
+                    <!-- ... unchanged ... -->
+                    <h1>Contact RoosterGoose</h1>
+                    <form action="https://formsubmit.co/support@roostergoose.co" method="POST" id="contact-form">
+                        <input type="hidden" name="_captcha" value="false" />
+                        <input type="hidden" name="_next" value="https://roostergoose.app/#contact" />
+                        <!-- Honeypot -->
+                        <input type="text" name="_honey" class="hidden-honey" />
+                        <!-- Disable Captcha -->
+                        <input type="hidden" name="_captcha" value="false" />
+                        <div class="form-row">
+                            <input type="text" name="name" placeholder="Full Name" required />
+                            <input type="email" name="email" placeholder="Email Address" required />
+                        </div>
+                        <div class="form-row" style="flex-direction: column;">
+                            <textarea name="message" rows="8" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit">Submit</button>
+                        <span id="confirmation-message" style="display: none; color: green; margin-top: 10px; font-family: 'Courier New', monospace;">
+                            ✅ Message sent! Check your email for confirmation.
+                        </span>
+                    </form>
+                </div>
+                <div class="legal-links">
+                    <h2>Legal Stuff</h2>
+                    <a onclick="toggleIframe('privacy')">Privacy Policy</a>
+                    <a onclick="toggleIframe('eula')">EULA</a>
+                    <a onclick="toggleIframe('terms')">Terms of Use</a>
+                </div>
+                <iframe id="privacy" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vTfrY-nDMoEKnxlH3f8tYQWNi_5t2xTIwxRlCTJ-4ahmHO2Q1yJR0wjEHeH2pof4A73ukEO9gZgshtY/pub?embedded=true"></iframe>
+                <iframe id="eula" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vSw5am1nA901wtB64JonUjzo4L1P_5z8D-_18MG42oUfMBS2ExUE4_hfDwJ_nZ3iIUyeDJjGW0GGiS2/pub?embedded=true"></iframe>
+                <iframe id="terms" class="legal-iframe" src="https://docs.google.com/document/d/e/2PACX-1vRkdVUb6AZfNEwhvz8Qk0WroqmsqCK3MWZucytfoHNRvmcNUCd45BTJr-c_LzxNhZwYG6kT0r6nrVbV/pub?embedded=true"></iframe>
+                <div class="footer">
+                    <p>© RoosterGoose LLC. All Rights Reserved.</p>
+                </div>
+            </div>
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="loading-indicator"></div>
+                <div class="status-text">Done</div>
+            </div>
+            <!-- Resize Handles -->
+            <div class="resize-handle resize-se"></div>
+            <div class="resize-handle resize-e"></div>
+            <div class="resize-handle resize-s"></div>
+        </div>
+        <script>
+            window.onload = function () {
+                setTimeout(function () {
+                    document.getElementById("splash").style.display = "none";
+                    document.querySelector(".safari-window").style.display = "block";
+                    const loadingIndicator = document.querySelector(".loading-indicator");
+                    const statusText = document.querySelector(".status-text");
+                    loadingIndicator.style.opacity = "1";
+                    statusText.textContent = "Loading roostergoose.app...";
+                    setTimeout(function () {
+                        loadingIndicator.style.opacity = "0";
+                        statusText.textContent = "Done";
+                    }, 2000);
+                }, 3000);
+            };
+
+            // Toggle Legal iFrames
+            function toggleIframe(id) {
+                const iframes = document.querySelectorAll(".legal-iframe");
+                iframes.forEach((el) => {
+                    el.style.display = el.id === id && el.style.display !== "block" ? "block" : "none";
+                });
+                const loadingIndicator = document.querySelector(".loading-indicator");
+                const statusText = document.querySelector(".status-text");
+                loadingIndicator.style.opacity = "1";
+                statusText.textContent = "Loading document...";
+                setTimeout(function () {
+                    loadingIndicator.style.opacity = "0";
+                    statusText.textContent = "Done";
+                }, 800);
+            }
+
+            // Classic Safari button effects
+            document.querySelectorAll(".nav-btn, .btn").forEach((button) => {
+                button.addEventListener("mousedown", function () {
+                    this.style.opacity = "0.7";
+                });
+                button.addEventListener("mouseup", function () {
+                    this.style.opacity = "1";
+                });
+                button.addEventListener("mouseleave", function () {
+                    this.style.opacity = "1";
+                });
             });
-         });
-      </script>
-   </body>
+
+            // Contact form handler
+            document.getElementById("contact-form").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const form = this;
+                const formData = new FormData(form);
+                form.reset();
+                fetch(form.action, {
+                    method: "POST",
+                    body: formData,
+                })
+                    .then((response) => {
+                        if (response.ok) {
+                            document.getElementById("confirmation-message").style.display = "inline";
+                        } else {
+                            alert("Submission failed. Please try again.");
+                        }
+                    })
+                    .catch((error) => {
+                        alert("Something went wrong. Please try again.");
+                        console.error(error);
+                    });
+            });
+
+            // Scroll behavior
+            document.querySelector(".contact-menu-item").addEventListener("click", function () {
+                document.getElementById("contact-section").scrollIntoView({ behavior: "smooth" });
+            });
+
+            document.getElementById("contact-bookmark").addEventListener("click", function () {
+                document.getElementById("contact-section").scrollIntoView({ behavior: "smooth" });
+            });
+
+            document.getElementById("home-bookmark").addEventListener("click", function () {
+                window.location.reload();
+            });
+
+            // Resize functionality
+            const safariWindow = document.querySelector(".safari-window");
+            let isResizing = false;
+            let resizeType = "";
+            let startX, startY, startWidth, startHeight;
+
+            function startResize(e, type) {
+                isResizing = true;
+                resizeType = type;
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = safariWindow.offsetWidth;
+                startHeight = safariWindow.offsetHeight;
+                document.addEventListener("mousemove", resize);
+                document.addEventListener("mouseup", stopResize);
+            }
+
+            function resize(e) {
+                if (!isResizing) return;
+                let newWidth = startWidth;
+                let newHeight = startHeight;
+
+                if (resizeType === "se" || resizeType === "e") {
+                    newWidth = Math.min(Math.max(startWidth + (e.clientX - startX), 320), 1400);
+                }
+                if (resizeType === "se" || resizeType === "s") {
+                    newHeight = Math.max(startHeight + (e.clientY - startY), 400);
+                }
+
+                safariWindow.style.width = `${newWidth}px`;
+                if (resizeType !== "e") {
+                    safariWindow.style.height = `${newHeight}px`;
+                }
+            }
+
+            function stopResize() {
+                isResizing = false;
+                document.removeEventListener("mousemove", resize);
+                document.removeEventListener("mouseup", stopResize);
+            }
+
+            document.querySelectorAll(".resize-handle").forEach((handle) => {
+                handle.addEventListener("mousedown", (e) => {
+                    startResize(e, handle.classList.contains("resize-se") ? "se" : handle.classList.contains("resize-e") ? "e" : "s");
+                });
+            });
+        </script>
+    </body>
 </html>
+
