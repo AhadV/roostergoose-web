@@ -17,14 +17,52 @@
          }
          /* Browser Shell Styling */
          .safari-window {
-         width: 800px;
-         max-width: 95%;
-         margin: 50px auto;
+         width: 1100px;
+         max-width: 1400px;
+         min-width: 320px;
+         min-height: 400px;
+         margin: 20px auto;
          border-radius: 8px 8px 6px 6px;
          box-shadow: 0 4px 18px rgba(0,0,0,0.4);
          background: #fff;
          overflow: hidden;
          display: none;
+         box-sizing: border-box;
+         position: relative;
+         }
+         .resize-handle {
+         position: absolute;
+         background: linear-gradient(to bottom, #d8d8d8, #a0a0a0);
+         border: 1px solid #7e7e7e;
+         border-radius: 3px;
+         z-index: 10;
+         cursor: pointer;
+         }
+         .resize-handle:hover {
+         background: linear-gradient(to bottom, #e0e0e0, #b0b0b0);
+         }
+         .resize-se {
+         width: 12px;
+         height: 12px;
+         bottom: -6px;
+         right: -6px;
+         cursor: se-resize;
+         }
+         .resize-e {
+         width: 8px;
+         height: 50px;
+         right: -4px;
+         top: 50%;
+         transform: translateY(-50%);
+         cursor: e-resize;
+         }
+         .resize-s {
+         width: 50px;
+         height: 8px;
+         bottom: -4px;
+         left: 50%;
+         transform: translateX(-50%);
+         cursor: s-resize;
          }
          /* Title Bar */
          .title-bar {
@@ -247,8 +285,10 @@
          font-size: 13px;
          line-height: 1.5;
          overflow-y: auto;
-         height: calc(100vh - 230px);
-         max-height: 600px;
+         max-height: none;
+         height: calc(100% - 133px);
+         box-sizing: border-box;
+         text-align: center; /* Center main text */
          }
          h1 {
          color: #4b0082;
@@ -263,10 +303,13 @@
          border-radius: 4px;
          padding: 2px 8px;
          margin-left: 6px;
+         display: inline-block; /* Aligns neatly in list */
+         box-shadow: 0 1px 2px rgba(0,0,0,0.2); /* Retro emboss */
          }
          .app-title {
          font-weight: bold;
          color: #4b0082;
+         text-align: left; /* Left-align for apps */
          }
          /* Status Bar */
          .status-bar {
@@ -301,7 +344,7 @@
          position: fixed;
          top: 0; left: 0;
          width: 100%; height: 100%;
-         background-color: #f2f2f2; /* Light gray background */
+         background-color: #f2f2f2;
          display: flex;
          align-items: center;
          justify-content: center;
@@ -310,7 +353,7 @@
          transition: opacity 1s ease;
          }
          #splash-logo {
-         font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif; /* Apple system font circa 2008 */
+         font-family: "Lucida Grande", "Helvetica Neue", Helvetica, Arial, sans-serif;
          font-size: 64px;
          font-weight: bold;
          color: #333;
@@ -443,6 +486,41 @@
          border-radius: 10px;
          border: 1px solid #464d59;
          }
+         /* Mobile Adjustments */
+         @media screen and (max-width: 768px) {
+         .safari-window {
+         width: 100vw;
+         max-width: 100%;
+         margin: 10px 0;
+         border-radius: 0;
+         }
+         .content {
+         padding: 15px;
+         max-height: none;
+         min-height: auto;
+         }
+         .resize-handle {
+         display: none;
+         }
+         }
+         .app-list {
+         text-align: left; /* Override centering for apps */
+         max-width: 680px; /* Match contact-block width */
+         margin: 0 auto; /* Center container */
+         }
+         .app-item {
+         margin-bottom: 20px; /* Space between apps */
+         padding-left: 10px; /* Slight indent */
+         }
+         .app-item p {
+         margin: 5px 0; /* Tighten description spacing */
+         text-align: left; /* Ensure description is left-aligned */
+         }
+         .app-divider {
+         height: 1px;
+         background: linear-gradient(to right, #d8d8d8, #a0a0a0); /* Retro gradient */
+         margin: 10px 0;
+         }
       </style>
    </head>
    <body>
@@ -496,7 +574,7 @@
                <div class="blue-progress"></div>
             </div>
          </div>
-         <!-- Bookmark Bar - "Apps" bookmark removed -->
+         <!-- Bookmark Bar -->
          <div class="bookmark-bar">
             <div class="bookmark" id="home-bookmark">
                <div class="bookmark-icon bookmark-home"></div>
@@ -516,13 +594,24 @@
             <h1>RoosterGoose</h1>
             <p>We hatch ideas, peck at bugs, and ship useful iOS apps with just the right amount of feathered flair. 🐓🪿</p>
             <h2>Our Apps</h2>
-            <p class="app-title">🪪 NotarizeHQ <a href="https://www.producthunt.com/products/notarytrusty-com" target="_blank" class="badge">RIP 💀</a></p>
-            <p>The notarization app the internet needed... until it didn't. Gone, but notary-forgotten.</p>
-            <p class="app-title">😁 SmileMaxx <a href="https://apps.apple.com/us/app/smilemaxx/id6737210322" target="_blank" class="badge">Live on iOS</a></p>
-            <p>Because your camera roll deserves pearly whites and maxxed-out smiles.</p>
-            <p class="app-title">🌿 LeafyLens <span class="badge">Coming Soon</span></p>
-            <p>Plant care meets AI magic. Snap, diagnose, and thrive. Your houseplants are about to get pampered.</p>
+            <div class="app-list">
+               <div class="app-item">
+                  <p class="app-title">🪪 NotarizeHQ <a href="https://www.producthunt.com/products/notarytrusty-com" target="_blank" class="badge">RIP 💀</a></p>
+                  <p>The notarization app the internet needed... until it didn't. Gone, but notary-forgotten.</p>
+               </div>
+               <div class="app-divider"></div>
+               <div class="app-item">
+                  <p class="app-title">😁 SmileMaxx <a href="https://apps.apple.com/us/app/smilemaxx/id6737210322" target="_blank" class="badge">Live on iOS</a></p>
+                  <p>Because your camera roll deserves pearly whites and maxxed-out smiles.</p>
+               </div>
+               <div class="app-divider"></div>
+               <div class="app-item">
+                  <p class="app-title">🌿 LeafyLens <span class="badge">Coming Soon</span></p>
+                  <p>Plant care meets AI magic. Snap, diagnose, and thrive. Your houseplants are about to get pampered.</p>
+               </div>
+            </div>
             <div class="contact-block" id="contact-section">
+               <!-- ... unchanged ... -->
                <h1>Contact RoosterGoose</h1>
                <form action="https://formsubmit.co/support@roostergoose.co" method="POST" id="contact-form">
                   <input type="hidden" name="_captcha" value="false">
@@ -562,97 +651,138 @@
             <div class="loading-indicator"></div>
             <div class="status-text">Done</div>
          </div>
+         <!-- Resize Handles -->
+         <div class="resize-handle resize-se"></div>
+         <div class="resize-handle resize-e"></div>
+         <div class="resize-handle resize-s"></div>
       </div>
       <script>
-window.onload = function () {
-  setTimeout(function () {
-    document.getElementById("splash").style.display = "none";
-    document.querySelector(".safari-window").style.display = "block";
-
-    const loadingIndicator = document.querySelector(".loading-indicator");
-    const statusText = document.querySelector(".status-text");
-
-    loadingIndicator.style.opacity = "1";
-    statusText.textContent = "Loading roostergoose.app...";
-
-    setTimeout(function () {
-      loadingIndicator.style.opacity = "0";
-      statusText.textContent = "Done";
-    }, 2000);
-  }, 5000); // splash duration
-};
-
-// Toggle Legal iFrames
-function toggleIframe(id) {
-  const iframes = document.querySelectorAll('.legal-iframe');
-  iframes.forEach(el => {
-    el.style.display = (el.id === id && el.style.display !== 'block') ? 'block' : 'none';
-  });
-
-  const loadingIndicator = document.querySelector(".loading-indicator");
-  const statusText = document.querySelector(".status-text");
-
-  loadingIndicator.style.opacity = "1";
-  statusText.textContent = "Loading document...";
-
-  setTimeout(function() {
-    loadingIndicator.style.opacity = "0";
-    statusText.textContent = "Done";
-  }, 800);
-}
-
-// Classic Safari button effects
-document.querySelectorAll('.nav-btn, .btn').forEach(button => {
-  button.addEventListener('mousedown', function() {
-    this.style.opacity = '0.7';
-  });
-  button.addEventListener('mouseup', function() {
-    this.style.opacity = '1';
-  });
-  button.addEventListener('mouseleave', function() {
-    this.style.opacity = '1';
-  });
-});
-
-// Contact form handler (clears form on submit, shows confirmation only on success)
-document.getElementById('contact-form').addEventListener('submit', function (e) {
-  e.preventDefault();
-  const form = this;
-  const formData = new FormData(form);
-
-  // Clear the form immediately on submit
-  form.reset();
-
-  fetch(form.action, {
-    method: "POST",
-    body: formData
-  })
-  .then(response => {
-    if (response.ok) {
-      // Only show confirmation message if submission is successful
-      document.getElementById('confirmation-message').style.display = "inline";
-    } else {
-      alert("Submission failed. Please try again.");
-    }
-  })
-  .catch(error => {
-    alert("Something went wrong. Please try again.");
-    console.error(error);
-  });
-});
-
-// Scroll behavior
-document.querySelector('.contact-menu-item').addEventListener('click', function() {
-  document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
-});
-
-document.getElementById('contact-bookmark').addEventListener('click', function() {
-  document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
-});
-
-document.getElementById('home-bookmark').addEventListener('click', function() {
-  window.location.reload();
-});
-</script>
-
-
+         window.onload = function () {
+            setTimeout(function () {
+               document.getElementById("splash").style.display = "none";
+               document.querySelector(".safari-window").style.display = "block";
+               const loadingIndicator = document.querySelector(".loading-indicator");
+               const statusText = document.querySelector(".status-text");
+               loadingIndicator.style.opacity = "1";
+               statusText.textContent = "Loading roostergoose.app...";
+               setTimeout(function () {
+                  loadingIndicator.style.opacity = "0";
+                  statusText.textContent = "Done";
+               }, 2000);
+            }, 3000);
+         };
+         
+         // Toggle Legal iFrames
+         function toggleIframe(id) {
+            const iframes = document.querySelectorAll('.legal-iframe');
+            iframes.forEach(el => {
+               el.style.display = (el.id === id && el.style.display !== 'block') ? 'block' : 'none';
+            });
+            const loadingIndicator = document.querySelector(".loading-indicator");
+            const statusText = document.querySelector(".status-text");
+            loadingIndicator.style.opacity = "1";
+            statusText.textContent = "Loading document...";
+            setTimeout(function() {
+               loadingIndicator.style.opacity = "0";
+               statusText.textContent = "Done";
+            }, 800);
+         }
+         
+         // Classic Safari button effects
+         document.querySelectorAll('.nav-btn, .btn').forEach(button => {
+            button.addEventListener('mousedown', function() {
+               this.style.opacity = '0.7';
+            });
+            button.addEventListener('mouseup', function() {
+               this.style.opacity = '1';
+            });
+            button.addEventListener('mouseleave', function() {
+               this.style.opacity = '1';
+            });
+         });
+         
+         // Contact form handler
+         document.getElementById('contact-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const form = this;
+            const formData = new FormData(form);
+            form.reset();
+            fetch(form.action, {
+               method: "POST",
+               body: formData
+            })
+            .then(response => {
+               if (response.ok) {
+                  document.getElementById('confirmation-message').style.display = "inline";
+               } else {
+                  alert("Submission failed. Please try again.");
+               }
+            })
+            .catch(error => {
+               alert("Something went wrong. Please try again.");
+               console.error(error);
+            });
+         });
+         
+         // Scroll behavior
+         document.querySelector('.contact-menu-item').addEventListener('click', function() {
+            document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+         });
+         
+         document.getElementById('contact-bookmark').addEventListener('click', function() {
+            document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
+         });
+         
+         document.getElementById('home-bookmark').addEventListener('click', function() {
+            window.location.reload();
+         });
+         
+         // Resize functionality
+         const safariWindow = document.querySelector('.safari-window');
+         let isResizing = false;
+         let resizeType = '';
+         let startX, startY, startWidth, startHeight;
+         
+         function startResize(e, type) {
+            isResizing = true;
+            resizeType = type;
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = safariWindow.offsetWidth;
+            startHeight = safariWindow.offsetHeight;
+            document.addEventListener('mousemove', resize);
+            document.addEventListener('mouseup', stopResize);
+         }
+         
+         function resize(e) {
+            if (!isResizing) return;
+            let newWidth = startWidth;
+            let newHeight = startHeight;
+         
+            if (resizeType === 'se' || resizeType === 'e') {
+               newWidth = Math.min(Math.max(startWidth + (e.clientX - startX), 320), 1400);
+            }
+            if (resizeType === 'se' || resizeType === 's') {
+               newHeight = Math.max(startHeight + (e.clientY - startY), 400);
+            }
+         
+            safariWindow.style.width = `${newWidth}px`;
+            if (resizeType !== 'e') {
+               safariWindow.style.height = `${newHeight}px`;
+            }
+         }
+         
+         function stopResize() {
+            isResizing = false;
+            document.removeEventListener('mousemove', resize);
+            document.removeEventListener('mouseup', stopResize);
+         }
+         
+         document.querySelectorAll('.resize-handle').forEach(handle => {
+            handle.addEventListener('mousedown', (e) => {
+               startResize(e, handle.classList.contains('resize-se') ? 'se' : handle.classList.contains('resize-e') ? 'e' : 's');
+            });
+         });
+      </script>
+   </body>
+</html>
